@@ -102,7 +102,7 @@ resource "aws_ecs_task_definition" "app" {
 
   container_definitions = jsonencode([{
     name  = var.app_services.name
-    image = var.app_services.ecs_task_container_image
+    image = var.ecs_task_container_image
     essential = true
     portMappings = [{
       containerPort = var.app_services.ecs_task_container_port
@@ -112,7 +112,7 @@ resource "aws_ecs_task_definition" "app" {
 }
 
 resource "aws_ecs_service" "app_service" {
-  name            = "my-app-service"
+  name            = var.app_services.name
   cluster         = data.terraform_remote_state.ecs_infra.outputs.cluster_id
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = 2
@@ -126,8 +126,8 @@ resource "aws_ecs_service" "app_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.app_tg.arn
-    container_name   = "my-app"
-    container_port   = 80
+    container_name   = var.ecs_task_container_image
+    container_port   = var.app_services.ecs_task_container_port
   }
 }
 

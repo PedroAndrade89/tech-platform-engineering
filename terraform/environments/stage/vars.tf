@@ -7,7 +7,6 @@ variable "app_services" {
     ecs_task_cpu                = number
     ecs_task_memory             = number
     name                        = string
-    ecs_task_container_image    = string
     ecs_task_container_port     = number
   })
   default = {
@@ -25,4 +24,10 @@ variable "region" {
   type        = string
   nullable    = false
   description = "Aws region"
+}
+variable "ecs_task_container_image" {
+  type        = string
+  nullable    = false
+  default = "your-docker-image:tag"
+  description = "Cotnainer image"
 }
