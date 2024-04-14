@@ -20,3 +20,9 @@ variable "app_services" {
     ecs_task_container_port     = 80
   }
 }
+
+variable "region" {
+  type        = string
+  nullable    = false
+  description = "Aws region"
+}

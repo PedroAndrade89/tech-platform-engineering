@@ -7,3 +7,4 @@ app_services = {
   ecs_task_container_image    = "your-docker-image:tag"
   ecs_task_container_port     = 80
 }
+region = "us-east-1"
