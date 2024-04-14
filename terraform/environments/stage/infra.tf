@@ -148,6 +148,7 @@ resource "aws_lb_target_group" "app_tg" {
   }
 }
 
+# tfsec:ignore:AVD-AWS-0054 -- Allow Listener for application load balancer does not use HTTPS
 resource "aws_lb_listener" "public_listener" {
   load_balancer_arn = data.terraform_remote_state.ecs_infra.outputs.lb_arn
   port              = 80
