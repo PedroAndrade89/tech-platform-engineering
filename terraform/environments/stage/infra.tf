@@ -56,6 +56,11 @@ output "listener_80_arn" {
   value       = data.terraform_remote_state.ecs_infra.outputs.listener_80_arn
 }
 
+output "log_group_name" {
+  description = "name of ecs cluster log group name"
+  value       = data.terraform_remote_state.ecs_infra.outputs.log_group_name
+}
+
 
 
 
@@ -111,6 +116,15 @@ resource "aws_ecs_task_definition" "app" {
     name  = var.app_services.name
     image = var.ecs_task_container_image
     essential = true
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = data.terraform_remote_state.ecs_infra.outputs.log_group_name
+        awslogs-region        = "us-east-1"
+        awslogs-stream-prefix = var.app_services.name
+      }
+    }
+
     portMappings = [{
       containerPort = var.app_services.ecs_task_container_port
       hostPort      = 3000
