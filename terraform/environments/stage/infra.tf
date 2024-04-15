@@ -51,6 +51,13 @@ output "default_tags" {
   value       = data.terraform_remote_state.ecs_infra.outputs.default_tags
 }
 
+output "listener_80_arn" {
+  description = "id of the load lalancer sg"
+  value       = data.terraform_remote_state.ecs_infra.outputs.listener_80_arn
+}
+
+
+
 
 resource "aws_security_group" "service-sg" {
   name        = "${var.app_services.name}-sg"
@@ -148,20 +155,8 @@ resource "aws_lb_target_group" "app_tg" {
   }
 }
 
-# tfsec:ignore:AVD-AWS-0054 -- Allow Listener for application load balancer does not use HTTPS
-resource "aws_lb_listener" "public_listener" {
-  load_balancer_arn = data.terraform_remote_state.ecs_infra.outputs.lb_arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.app_tg.arn
-  }
-}
-
 resource "aws_lb_listener_rule" "public_listener_rule" {
-  listener_arn = aws_lb_listener.public_listener.arn
+  listener_arn = data.terraform_remote_state.ecs_infra.outputs.listener_80_arn
   priority     = 100
 
   action {
