@@ -81,7 +81,7 @@ resource "aws_security_group" "service-sg" {
 # tfsec:ignore:AVD-AWS-0107 -- Allow unrestricted ingress on port 80 from a specific security group
 resource "aws_security_group_rule" "http_ingress" {
   type              = "ingress"
-  description       = "Port 80 HTTP"
+  description       = "Port 3000 TCP"
   from_port         = 3000
   to_port           = 3000
   protocol          = "tcp"
