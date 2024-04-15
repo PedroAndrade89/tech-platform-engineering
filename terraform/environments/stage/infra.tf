@@ -61,6 +61,10 @@ output "log_group_name" {
   value       = data.terraform_remote_state.ecs_infra.outputs.log_group_name
 }
 
+output "vpc_cid_block" {
+  value = data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block
+}
+
 
 
 
@@ -85,10 +89,9 @@ resource "aws_security_group_rule" "http_ingress" {
   from_port         = 3000
   to_port           = 3000
   protocol          = "tcp"
+  cidr_blocks = [data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block]
   security_group_id = aws_security_group.service-sg.id
 
-  # Specify the source security group ID instead of CIDR blocks
-  source_security_group_id = data.terraform_remote_state.ecs_infra.outputs.lb_security_group_id
 }
 
 # tfsec:ignore:AVD-AWS-0104 -- Allow unrestricted egress to the internet
