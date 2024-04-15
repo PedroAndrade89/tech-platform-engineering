@@ -167,11 +167,11 @@ resource "aws_lb_target_group" "app_tg" {
   health_check {
     protocol            = "HTTP"
     path                = "/"
-    healthy_threshold   = 5
+    healthy_threshold   = 3
     unhealthy_threshold = 2
     timeout             = 5
     port = var.app_services.ecs_task_container_port
-    interval            = 30
+    interval            = 20
     matcher             = "200"
   }
 }
