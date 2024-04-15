@@ -65,6 +65,10 @@ output "vpc_cid_block" {
   value = data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block
 }
 
+output "lb_dns_name" {
+  value = data.terraform_remote_state.ecs_infra.outputs.lb_dns_name
+}
+
 
 
 
