@@ -82,8 +82,8 @@ resource "aws_security_group" "service-sg" {
 resource "aws_security_group_rule" "http_ingress" {
   type              = "ingress"
   description       = "Port 80 HTTP"
-  from_port         = 80
-  to_port           = 80
+  from_port         = 3000
+  to_port           = 3000
   protocol          = "tcp"
   security_group_id = aws_security_group.service-sg.id
 
