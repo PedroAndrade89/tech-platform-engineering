@@ -12,6 +12,6 @@ RUN npm install --silent
 
 # add app
 COPY . ./
-ENV PORT 3000
+ENV PORT 80
 # start app
 CMD ["npm", "start"]
