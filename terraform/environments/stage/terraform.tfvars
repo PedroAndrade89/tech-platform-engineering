@@ -5,6 +5,6 @@ app_services = {
   ecs_task_memory             = 512       // Memory in MB
   name                        = "mews-api"
   ecs_task_container_image    = "your-docker-image:tag"
-  ecs_task_container_port     = 80
+  ecs_task_container_port     = 3000
 }
 region = "us-east-1"

@@ -113,7 +113,7 @@ resource "aws_ecs_task_definition" "app" {
     essential = true
     portMappings = [{
       containerPort = var.app_services.ecs_task_container_port
-      hostPort      = 80
+      hostPort      = 3000
     }]
   }])
 }
@@ -151,6 +151,7 @@ resource "aws_lb_target_group" "app_tg" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 5
+    port = 3000
     interval            = 30
     matcher             = "200"
   }
