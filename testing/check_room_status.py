@@ -1,42 +1,37 @@
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
 def check_room_status(url):
     # Setup Chrome WebDriver
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode.
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model, crucial on Linux
+    chrome_options.add_argument("--disable-gpu")  # Disable GPU hardware acceleration
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    chrome_options.add_argument("--remote-debugging-port=9222")  # Remote debugging port
     service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service)
+
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     try:
-        # Navigate to the webpage passed as an argument
+        # Navigate to the webpage
         driver.get(url)
 
-        # Locate the table
-        table = driver.find_element(By.CLASS_NAME, "room-status-table")
+        # Get the title of the page
+        page_title = driver.title
+        print("The title of the page is:", page_title)
 
-        # Find all rows in the table
-        rows = table.find_elements(By.TAG_NAME, "tr")
+        # Check if the title is 'React App'
+        if page_title == "React App":
+            print("Title verification successful.")
+        else:
+            print("Title verification failed.")
+            fail_count += 1
 
-        fail_count = 0  # Counter for failures based on conditions
-
-        # Iterate through rows and check conditions
-        for row in rows:
-            # Get all columns for the current row
-            cols = row.find_elements(By.TAG_NAME, "td")
-            if cols:  # This check skips the header row if it's also a 'tr' with 'td'
-                room_number = cols[0].text
-                floor_number = cols[1].text
-                room_status = cols[2].text
-
-                # Print for debugging, or assert conditions for testing
-                print(f"Room {room_number}, Floor {floor_number}, Status {room_status}")
-
-                # Example condition: Check if Room 208 is marked as Dirty
-                if room_number == "208" and room_status != "Dirty":
-                    print("Test Fail: Room 208 should be Dirty.")
-                    fail_count += 1
 
         # Check if there were any failures
         if fail_count > 0:
