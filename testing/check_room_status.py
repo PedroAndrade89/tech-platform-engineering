@@ -21,17 +21,22 @@ def check_room_status(url):
 
         fail_count = 0  # Counter for failures based on conditions
 
-        # Check each row in the table, skip header
-        for row in rows[1:]:
-            columns = row.find_elements(By.TAG_NAME, "td")
-            room_number = columns[0].text
-            floor_number = columns[1].text
-            room_status = columns[2].text
+        # Iterate through rows and check conditions
+        for row in rows:
+            # Get all columns for the current row
+            cols = row.find_elements(By.TAG_NAME, "td")
+            if cols:  # This check skips the header row if it's also a 'tr' with 'td'
+                room_number = cols[0].text
+                floor_number = cols[1].text
+                room_status = cols[2].text
 
-            # Condition check example
-            if floor_number == '8' and room_status != 'Clean':
-                print(f"Check failed for Room {room_number} on Floor {floor_number}: Status is {room_status}")
-                fail_count += 1
+                # Print for debugging, or assert conditions for testing
+                print(f"Room {room_number}, Floor {floor_number}, Status {room_status}")
+
+                # Example condition: Check if Room 208 is marked as Dirty
+                if room_number == "208" and room_status != "Dirty":
+                    print("Test Fail: Room 208 should be Dirty.")
+                    fail_count += 1
 
         # Check if there were any failures
         if fail_count > 0:
