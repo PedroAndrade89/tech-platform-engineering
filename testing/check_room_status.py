@@ -17,6 +17,8 @@ def check_room_status(url):
 
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
+    fail_count = 0  # Counter for failures based on conditions
+
     try:
         # Navigate to the webpage
         driver.get(url)
