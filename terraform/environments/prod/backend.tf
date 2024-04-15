@@ -1,8 +1,5 @@
 provider "aws" {
   region = var.region
-  default_tags {
-    tags = var.default_tags
-  }
   #profile = "sandbox"
 
 }
@@ -26,7 +23,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "df-terraform-nonprod"
-    key            = "environments/stage/ecs-infra-prod.tf"
+    key            = "environments/prod/ecs-sv-infra-prod.tf"
     region         = "us-east-1"
     dynamodb_table = "df-terraform-nonprod-lock-db"
   }

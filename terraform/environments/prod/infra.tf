@@ -3,7 +3,7 @@ data "terraform_remote_state" "ecs_infra" {
 
   config = {
     bucket         = "df-terraform-nonprod"
-    key            = "environments/stage/ecs-infra-prod.tf"
+    key            = "environments/prod/ecs-infra-prod.tf"
     region         = "us-east-1"
     dynamodb_table = "df-terraform-nonprod-lock-db"
   }
@@ -14,15 +14,20 @@ output "ecs_cluster_name" {
   value       = data.terraform_remote_state.ecs_infra.outputs.ecs_infrastructure
 }
 
-output "stage_vpc_id" {
+output "cluster_id" {
+  description = "ARN of the Load Balancer"
+  value       = data.terraform_remote_state.ecs_infra.outputs.cluster_id
+}
+
+output "prod_vpc_id" {
   value = data.terraform_remote_state.ecs_infra.outputs.vpc_id
 }
 
-output "stage_public_subnets" {
+output "prod_public_subnets" {
   value = data.terraform_remote_state.ecs_infra.outputs.public_subnets
 }
 
-output "stage_private_subnets" {
+output "prod_private_subnets" {
   value = data.terraform_remote_state.ecs_infra.outputs.private_subnets
 }
 
@@ -31,69 +36,133 @@ output "load_balancer_arn" {
   value       = data.terraform_remote_state.ecs_infra.outputs.lb_arn
 }
 
+output "ecs-service-role" {
+  description = "ARN of the Load Balancer"
+  value       = data.terraform_remote_state.ecs_infra.outputs.ecs-service-role-arn
+}
+
+output "lb-security-group-id" {
+  description = "id of the load lalancer sg"
+  value       = data.terraform_remote_state.ecs_infra.outputs.lb_security_group_id
+}
+
+output "default_tags" {
+  description = "id of the load lalancer sg"
+  value       = data.terraform_remote_state.ecs_infra.outputs.default_tags
+}
+
+output "listener_80_arn" {
+  description = "id of the load lalancer sg"
+  value       = data.terraform_remote_state.ecs_infra.outputs.listener_80_arn
+}
+
+output "log_group_name" {
+  description = "name of ecs cluster log group name"
+  value       = data.terraform_remote_state.ecs_infra.outputs.log_group_name
+}
+
+output "vpc_cid_block" {
+  value = data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block
+}
+
+output "lb_dns_name" {
+  value = data.terraform_remote_state.ecs_infra.outputs.lb_dns_name
+}
 
 
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs_task_execution_role"
+resource "aws_security_group" "service-sg" {
+  name        = "${var.app_services.name}-sg"
+  description = "Allow HTTP and HTTPS traffic inbound"
+  vpc_id      = data.terraform_remote_state.ecs_infra.outputs.vpc_id
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-        Effect = "Allow"
-      },
-    ]
-  })
+  tags = merge(
+    {
+      "Name"        = "${data.terraform_remote_state.ecs_infra.outputs.ecs_infrastructure}-sg-alb",
+      "Environment" = var.environment
+    },
+    data.terraform_remote_state.ecs_infra.outputs.default_tags
+  )
+}
+
+# tfsec:ignore:AVD-AWS-0107 -- Allow unrestricted ingress on port 80 from a specific security group
+resource "aws_security_group_rule" "http_ingress" {
+  type              = "ingress"
+  description       = "Port 3000 TCP"
+  from_port         = 3000
+  to_port           = 3000
+  protocol          = "tcp"
+  cidr_blocks = [data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block]
+  security_group_id = aws_security_group.service-sg.id
+
+}
+
+# tfsec:ignore:AVD-AWS-0104 -- Allow unrestricted egress to the internet
+resource "aws_security_group_rule" "all_egress" {
+  type              = "egress"
+  description       = "Allow egress to internet"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.service-sg.id
+  cidr_blocks       = ["0.0.0.0/0"]
+  ipv6_cidr_blocks  = ["::/0"]
+
 }
 
 resource "aws_ecs_task_definition" "app" {
   family                   = var.app_services.ecs_task_family
   network_mode             =  var.app_services.network_mode
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  execution_role_arn       = data.terraform_remote_state.ecs_infra.outputs.ecs-service-role-arn
   cpu                      =  var.app_services.ecs_task_cpu
   memory                   =  var.app_services.ecs_task_memory
 
   container_definitions = jsonencode([{
     name  = var.app_services.name
-    image = var.app_services.ecs_task_container_image
+    image = var.ecs_task_container_image
     essential = true
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        awslogs-group         = data.terraform_remote_state.ecs_infra.outputs.log_group_name
+        awslogs-region        = "us-east-1"
+        awslogs-stream-prefix = var.app_services.name
+      }
+    }
+
     portMappings = [{
       containerPort = var.app_services.ecs_task_container_port
-      hostPort      = 80
+      hostPort      = 3000
     }]
   }])
 }
 
 resource "aws_ecs_service" "app_service" {
-  name            = "my-app-service"
-  cluster         = aws_ecs_cluster.cluster.id
+  name            = var.app_services.name
+  cluster         = data.terraform_remote_state.ecs_infra.outputs.cluster_id
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = aws_subnet.public[*].id
-    security_groups = [aws_security_group.public_sg.id]
+    subnets         = data.terraform_remote_state.ecs_infra.outputs.private_subnets
+    security_groups = [aws_security_group.service-sg.id]
     assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.app_tg.arn
-    container_name   = "my-app"
-    container_port   = 80
+    container_name   = var.app_services.name
+    container_port   = var.app_services.ecs_task_container_port
   }
 }
 
 resource "aws_lb_target_group" "app_tg" {
   name     = "app-tg"
-  port     = 80
+  port     = 3000
+  target_type = "ip"
   protocol = "HTTP"
-  vpc_id   = aws_vpc.main[0].id
+  vpc_id   = data.terraform_remote_state.ecs_infra.outputs.vpc_id
 
   health_check {
     protocol            = "HTTP"
@@ -101,18 +170,24 @@ resource "aws_lb_target_group" "app_tg" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 5
+    port = 3000
     interval            = 30
     matcher             = "200"
   }
 }
 
-resource "aws_lb_listener" "public_listener" {
-  load_balancer_arn = aws_lb.public_lb.arn
-  port              = 80
-  protocol          = "HTTP"
+resource "aws_lb_listener_rule" "public_listener_rule" {
+  listener_arn = data.terraform_remote_state.ecs_infra.outputs.listener_80_arn
+  priority     = 100
 
-  default_action {
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.app_tg.arn
+  }
+
+  condition {
+    http_request_method {
+      values = ["GET"]
+    }
   }
 }
