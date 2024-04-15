@@ -23,7 +23,7 @@ terraform {
   }
   backend "s3" {
     bucket         = "df-terraform-nonprod"
-    key            = "environments/stage/ecs-infra-stage.tf"
+    key            = "environments/stage/ecs-sv-infra-stage.tf"
     region         = "us-east-1"
     dynamodb_table = "df-terraform-nonprod-lock-db"
   }
