@@ -32,6 +32,13 @@ variable "environment" {
   description = "Environment type"
 }
 
+
+variable "target_group_name" {
+  type        = string
+  nullable    = false
+  description = "Aws region"
+}
+
 variable "ecs_task_container_image" {
   type        = string
   nullable    = false

@@ -158,8 +158,8 @@ resource "aws_ecs_service" "app_service" {
 }
 
 resource "aws_lb_target_group" "app_tg" {
-  name     = "app-tg"
-  port     = 3000
+  name     = var.target_group_name
+  port     = var.app_services.ecs_task_container_port
   target_type = "ip"
   protocol = "HTTP"
   vpc_id   = data.terraform_remote_state.ecs_infra.outputs.vpc_id
@@ -170,7 +170,7 @@ resource "aws_lb_target_group" "app_tg" {
     healthy_threshold   = 5
     unhealthy_threshold = 2
     timeout             = 5
-    port = 3000
+    port = var.app_services.ecs_task_container_port
     interval            = 30
     matcher             = "200"
   }

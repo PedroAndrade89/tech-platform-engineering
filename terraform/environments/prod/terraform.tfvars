@@ -9,3 +9,4 @@ app_services = {
 }
 region = "us-east-1"
 environment = "prod"
+target_group_name = "app-tg-prod"

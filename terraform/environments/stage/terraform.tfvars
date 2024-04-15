@@ -8,3 +8,5 @@ app_services = {
   ecs_task_container_port     = 3000
 }
 region = "us-east-1"
+environment = "stage"
+target_group_name = "app-tg-stage"

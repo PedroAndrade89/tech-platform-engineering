@@ -20,11 +20,24 @@ variable "app_services" {
   }
 }
 
+variable "environment" {
+  type        = string
+  nullable    = false
+  description = "Environment type"
+}
+
 variable "region" {
   type        = string
   nullable    = false
   description = "Aws region"
 }
+
+variable "target_group_name" {
+  type        = string
+  nullable    = false
+  description = "Aws region"
+}
+
 variable "ecs_task_container_image" {
   type        = string
   nullable    = false
