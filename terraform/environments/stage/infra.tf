@@ -101,13 +101,14 @@ resource "aws_security_group_rule" "http_ingress" {
 
 resource "aws_security_group_rule" "all_egress" {
   type              = "egress"
-  description       = "Allow egress to specific cidr"
+  description       = "Allow egress to all IPs"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
   security_group_id = aws_security_group.service-sg.id
-  cidr_blocks       = [data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block]  # Example
+  cidr_blocks       = ["0.0.0.0/0"]  # Allow all IPv4 addresses
 }
+
 
 resource "aws_ecs_task_definition" "app" {
   family                   = var.app_services.ecs_task_family
