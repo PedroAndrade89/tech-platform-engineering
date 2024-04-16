@@ -135,6 +135,7 @@ resource "aws_ecs_task_definition" "app" {
     portMappings = [{
       containerPort = var.app_services.ecs_task_container_port
       hostPort      = var.app_services.ecs_task_host_port
+    }]
   }])
 }
 
