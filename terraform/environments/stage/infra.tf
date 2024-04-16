@@ -70,9 +70,6 @@ output "lb_dns_name" {
   value = data.terraform_remote_state.ecs_infra.outputs.lb_dns_name
 }
 
-
-
-
 resource "aws_security_group" "service-sg" {
   name        = "${var.app_services.name}-sg"
   description = "Allow HTTP and HTTPS traffic inbound"
@@ -126,7 +123,7 @@ resource "aws_ecs_task_definition" "app" {
       logDriver = "awslogs"
       options = {
         awslogs-group         = data.terraform_remote_state.ecs_infra.outputs.log_group_name
-        awslogs-region        = "us-east-1"
+        awslogs-region        = var.region
         awslogs-stream-prefix = var.app_services.name
       }
     }
