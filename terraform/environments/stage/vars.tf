@@ -9,6 +9,8 @@ variable "app_services" {
     name                        = string
     ecs_task_container_port     = number
     desired_count               = number
+    maximum_percent             = number
+    minimum_healthy_percent     = number
     ecs_task_host_port = number
   })
   default = {
@@ -20,6 +22,8 @@ variable "app_services" {
     ecs_task_container_image    = "your-docker-image:tag"
     ecs_task_container_port     = 80
     desired_count               = 1
+    maximum_percent             = 100
+    minimum_healthy_percent     = 25
     ecs_task_host_port = 80
   }
 }

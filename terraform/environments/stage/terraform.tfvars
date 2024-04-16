@@ -6,6 +6,8 @@ app_services = {
   name                        = "mews-api-stage"
   ecs_task_container_image    = "your-docker-image:tag"
   desired_count               = 2
+  maximum_percent             = 100
+  minimum_healthy_percent     = 50
   ecs_task_container_port     = 3000
   ecs_task_host_port          = 3000
 }
