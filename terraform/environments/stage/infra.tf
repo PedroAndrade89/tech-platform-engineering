@@ -98,7 +98,6 @@ resource "aws_security_group_rule" "http_ingress" {
 
 }
 
-# tfsec:ignore:AVD-AWS-0104 -- Allow unrestricted egress to the internet
 resource "aws_security_group_rule" "all_egress" {
   type              = "egress"
   description       = "Allow egress to specific cidr"
