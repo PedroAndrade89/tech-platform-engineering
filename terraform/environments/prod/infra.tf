@@ -162,7 +162,7 @@ resource "aws_ecs_service" "app_service" {
   }
 
   # Ensure that tasks are spread across multiple AZs
-  placement_strategy {
+  ordered_placement_strategy {
     type  = "spread"
     field = "attribute:ecs.availability-zone"
   }
