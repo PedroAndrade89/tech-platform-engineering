@@ -96,7 +96,7 @@ resource "aws_security_group_rule" "http_ingress" {
   security_group_id = aws_security_group.service-sg.id
 
 }
-# tfsec:ignore:AVD-AWS-0104 -- Allow unrestricted ingress on port 80 for HTTP web traffic
+
 resource "aws_security_group_rule" "all_egress" {
   type              = "egress"
   description       = "Allow egress to all IPs"
@@ -104,7 +104,7 @@ resource "aws_security_group_rule" "all_egress" {
   to_port           = 0
   protocol          = "-1"
   security_group_id = aws_security_group.service-sg.id
-  cidr_blocks       = ["0.0.0.0/0"]  # Allow all IPv4 addresses
+  cidr_blocks       = [data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block]  # Allow all IPv4 addresses
 }
 
 
