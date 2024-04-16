@@ -8,7 +8,8 @@ variable "app_services" {
     ecs_task_memory             = number
     name                        = string
     ecs_task_container_port     = number
-    ecs_task_host_port          = number
+    desired_count               = number
+    ecs_task_host_port = number
   })
   default = {
     ecs_task_family             = "default-family"
@@ -18,7 +19,8 @@ variable "app_services" {
     name                        = "example-app"
     ecs_task_container_image    = "your-docker-image:tag"
     ecs_task_container_port     = 80
-    ecs_task_host_port          = 80
+    desired_count               = 1
+    ecs_task_host_port = 80
   }
 }
 
