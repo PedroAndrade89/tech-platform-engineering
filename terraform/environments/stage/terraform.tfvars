@@ -10,6 +10,7 @@ app_services = {
   minimum_healthy_percent     = 50
   ecs_task_container_port     = 3000
   ecs_task_host_port          = 3000
+  health_check_grace_period_seconds = 30
 }
 region = "us-east-1"
 environment = "stage"

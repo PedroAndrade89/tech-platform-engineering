@@ -142,6 +142,7 @@ resource "aws_ecs_service" "app_service" {
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = var.app_services.desired_count
   launch_type     = "FARGATE"
+  health_check_grace_period_seconds = var.app_services.health_check_grace_period_seconds
 
   # Define Deployment Configuration for more granular control over the update process
   deployment_maximum_percent        = var.app_services.maximum_percent

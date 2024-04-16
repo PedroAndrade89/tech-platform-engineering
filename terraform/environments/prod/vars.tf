@@ -11,6 +11,7 @@ variable "app_services" {
     desired_count               = number
     maximum_percent             = number
     minimum_healthy_percent     = number
+    health_check_grace_period_seconds = number
     ecs_task_host_port = number
   })
   default = {
@@ -24,6 +25,7 @@ variable "app_services" {
     desired_count               = 1
     maximum_percent             = 100
     minimum_healthy_percent     = 25
+    health_check_grace_period_seconds = 30
     ecs_task_host_port = 80
   }
 }
