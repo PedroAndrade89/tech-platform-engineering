@@ -7,8 +7,8 @@ app_services = {
   ecs_task_container_image    = "your-docker-image:tag"
   desired_count               = 3
   ecs_task_container_port     = 3000
-  maximum_percent             = 100
-  minimum_healthy_percent     = 25
+  maximum_percent             = 200
+  minimum_healthy_percent     = 50
   ecs_task_host_port = 3000
 }
 region = "us-east-1"
