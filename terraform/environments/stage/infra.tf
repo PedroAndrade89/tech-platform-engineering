@@ -143,7 +143,7 @@ resource "aws_ecs_service" "app_service" {
   desired_count   = var.app_services.desired_count
   launch_type     = "FARGATE"
 
-  eployment_controller {
+  deployment_controller {
     type = "ECS"  # ECS is the default and currently only supported type, which implements Rolling Update
   }
 
