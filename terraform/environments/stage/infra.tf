@@ -143,6 +143,10 @@ resource "aws_ecs_service" "app_service" {
   desired_count   = var.app_services.desired_count
   launch_type     = "FARGATE"
 
+  # Define Deployment Configuration for more granular control over the update process
+  deployment_maximum_percent        = var.app_services.maximum_percent
+  deployment_minimum_healthy_percent = var.app_services.minimum_healthy_percent
+
   deployment_controller {
     type = "ECS"  # ECS is the default and currently only supported type, which implements Rolling Update
   }
@@ -151,12 +155,6 @@ resource "aws_ecs_service" "app_service" {
   deployment_circuit_breaker {
     enable   = true
     rollback = true  # Automatically rollback to the last successful deployment if a failure is detected
-  }
-
-  # Define Deployment Configuration for more granular control over the update process
-  deployment_configuration {
-    maximum_percent        = var.app_services.maximum_percent
-    minimum_healthy_percent = var.app_services.minimum_healthy_percent
   }
 
   network_configuration {
