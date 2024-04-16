@@ -6,6 +6,7 @@ data "terraform_remote_state" "ecs_infra" {
     key            = "environments/prod/ecs-infra-prod.tf"
     region         = "us-east-1"
     dynamodb_table = "df-terraform-nonprod-lock-db"
+    #profile = "dealerfirestage"
   }
 }
 

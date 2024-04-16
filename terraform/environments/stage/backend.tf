@@ -1,6 +1,6 @@
 provider "aws" {
   region = var.region
-  #profile = "sandbox"
+  #profile = "dealerfirestage"
 
 }
 
@@ -26,6 +26,7 @@ terraform {
     key            = "environments/stage/ecs-sv-infra-stage.tf"
     region         = "us-east-1"
     dynamodb_table = "df-terraform-nonprod-lock-db"
+    #profile = "dealerfirestage"
   }
 }
 
