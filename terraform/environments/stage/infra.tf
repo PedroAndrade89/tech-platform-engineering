@@ -140,7 +140,7 @@ resource "aws_ecs_service" "app_service" {
   name            = var.app_services.name
   cluster         = data.terraform_remote_state.ecs_infra.outputs.cluster_id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 2
+  desired_count   = var.app_services.desired_count
   launch_type     = "FARGATE"
 
   network_configuration {
