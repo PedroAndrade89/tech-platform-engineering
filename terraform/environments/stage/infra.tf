@@ -157,6 +157,12 @@ resource "aws_ecs_service" "app_service" {
     rollback = true  # Automatically rollback to the last successful deployment if a failure is detected
   }
 
+  # Ensure that tasks are spread across multiple AZs
+  placement_strategy {
+    type  = "spread"
+    field = "attribute:ecs.availability-zone"
+  }
+
   network_configuration {
     subnets         = data.terraform_remote_state.ecs_infra.outputs.private_subnets
     security_groups = [aws_security_group.service-sg.id]

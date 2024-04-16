@@ -161,6 +161,12 @@ resource "aws_ecs_service" "app_service" {
     assign_public_ip = true
   }
 
+  # Ensure that tasks are spread across multiple AZs
+  placement_strategy {
+    type  = "spread"
+    field = "attribute:ecs.availability-zone"
+  }
+
   load_balancer {
     target_group_arn = aws_lb_target_group.app_tg.arn
     container_name   = var.app_services.name
