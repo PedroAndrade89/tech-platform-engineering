@@ -98,7 +98,7 @@ resource "aws_security_group_rule" "http_ingress" {
   security_group_id = aws_security_group.service-sg.id
 
 }
-
+# tfsec:ignore:AVD-AWS-0107 -- Allow unrestricted ingress on port 80 for HTTP web traffic
 resource "aws_security_group_rule" "all_egress" {
   type              = "egress"
   description       = "Allow egress to all IPs"
