@@ -8,6 +8,7 @@ variable "app_services" {
     ecs_task_memory             = number
     name                        = string
     ecs_task_container_port     = number
+    ecs_task_host_port = number
   })
   default = {
     ecs_task_family             = "default-family"

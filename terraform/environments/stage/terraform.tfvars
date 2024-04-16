@@ -6,6 +6,7 @@ app_services = {
   name                        = "mews-api-stage"
   ecs_task_container_image    = "your-docker-image:tag"
   ecs_task_container_port     = 3000
+  ecs_task_host_port          = 3000
 }
 region = "us-east-1"
 environment = "stage"
