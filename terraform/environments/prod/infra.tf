@@ -99,14 +99,12 @@ resource "aws_security_group_rule" "http_ingress" {
 # tfsec:ignore:AVD-AWS-0104 -- Allow unrestricted egress to the internet
 resource "aws_security_group_rule" "all_egress" {
   type              = "egress"
-  description       = "Allow egress to internet"
+  description       = "Allow egress to specific cidr"
   from_port         = 0
   to_port           = 0
   protocol          = "-1"
   security_group_id = aws_security_group.service-sg.id
-  cidr_blocks       = ["0.0.0.0/0"]
-  ipv6_cidr_blocks  = ["::/0"]
-
+  cidr_blocks       = [data.terraform_remote_state.ecs_infra.outputs.vpc_cid_block]  # Example
 }
 
 resource "aws_ecs_task_definition" "app" {
